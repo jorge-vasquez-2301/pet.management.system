@@ -1,0 +1,8 @@
+# --- !Ups
+CREATE TABLE Pet (
+  id     BIGINT      NOT NULL AUTO_INCREMENT,
+  type   VARCHAR(32) NOT NULL,
+  name   VARCHAR(32) NOT NULL,
+  gender VARCHAR(8)  NOT NULL,
+  PRIMARY KEY (id)
+);

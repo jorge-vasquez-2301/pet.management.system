@@ -1,2 +1,3 @@
 # pet.management.system
-Pet management system
+
+**<h2>Design choices</h2>**
