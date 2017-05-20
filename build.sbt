@@ -1,4 +1,4 @@
-name := """pet.management.system"""
+name := "pet.management.system"
 organization := "com.example"
 
 version := "1.0-SNAPSHOT"

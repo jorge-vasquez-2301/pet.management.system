@@ -17,6 +17,8 @@ import java.util.concurrent.CompletionStage;
 /**
  * The PetRESTController class.
  * This controller exposes the app's RESTful API
+ * @author Jorge Vasquez
+ * @since 1.8
  */
 public class PetRESTController extends Controller {
 

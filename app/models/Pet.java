@@ -18,6 +18,8 @@ import static com.avaje.ebean.Expr.ilike;
 /**
  * The Pet class.
  * This class models the information about a pet.
+ * @author Jorge Vasquez
+ * @since 1.8
  */
 @Entity
 public class Pet extends Model {
