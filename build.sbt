@@ -7,5 +7,4 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 
 scalaVersion := "2.11.11"
 
-libraryDependencies ++= Seq(filters, cache, evolutions)
-libraryDependencies ++= Seq(filters, cache, evolutions)
+libraryDependencies ++= Seq(cache, evolutions)

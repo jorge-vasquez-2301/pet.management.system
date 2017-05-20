@@ -1,18 +1,29 @@
 package controllers;
 
+import com.avaje.ebean.Ebean;
 import models.Pet;
 import play.Logger;
 import play.cache.CacheApi;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 /**
  * The PetRESTController class.
  * This controller exposes the app's RESTful API
  */
 public class PetRESTController extends Controller {
+
+    /* constants. */
+    private static final String SEARCH_BY_NAME_KEY = "name:";
+    private static final String SEARCH_BY_TYPE_KEY = "type:";
+    private static final String SEARCH_BY_GENDER_KEY = "gender:";
 
     private CacheApi cache;
 
@@ -50,8 +61,10 @@ public class PetRESTController extends Controller {
      * @param name The searched name
      * @return the Result containing search results
      */
-    public Result searchByName(String name) {
-        return TODO;
+    public CompletionStage<Result> searchByName(String name) {
+        return CompletableFuture.supplyAsync(() -> cache.getOrElse(SEARCH_BY_NAME_KEY + name.toLowerCase(),
+                                                                   () -> Pet.findByName(name)))
+                                .thenApply(pets -> ok(Json.stringify(Json.toJson(pets))));
     }
 
     /**
@@ -60,8 +73,12 @@ public class PetRESTController extends Controller {
      * @param gender  The searched gender (optional)
      * @return the Result containing search results
      */
-    public Result searchByTypeAndGender(String petType, String gender) {
-        return TODO;
+    public CompletionStage<Result> searchByTypeAndGender(String petType, String gender) {
+        String cacheKey = SEARCH_BY_TYPE_KEY + petType + ((gender != null) ? "," + SEARCH_BY_GENDER_KEY + gender : "");
+        Callable<List<Pet>> actionToExecute = () -> (gender != null) ? Pet.findByTypeAndGender(petType, gender)
+                                                                     : Pet.findByType(petType);
+        return CompletableFuture.supplyAsync(() -> cache.getOrElse(cacheKey, actionToExecute))
+                                .thenApply(pets -> ok(Json.stringify(Json.toJson(pets))));
     }
 
     /**
@@ -70,6 +87,10 @@ public class PetRESTController extends Controller {
      * @return the Result containing the result code
      */
     public Result deletePet(long id) {
-        return TODO;
+        Pet pet = Ebean.find(Pet.class, id);
+        if (pet != null) {
+            pet.delete();
+        }
+        return ok();
     }
 }

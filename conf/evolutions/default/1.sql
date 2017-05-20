@@ -1,8 +1,13 @@
 # --- !Ups
-CREATE TABLE Pet (
-  id     BIGINT      NOT NULL AUTO_INCREMENT,
-  type   VARCHAR(32) NOT NULL,
-  name   VARCHAR(32) NOT NULL,
-  gender VARCHAR(8)  NOT NULL,
+CREATE TABLE PET (
+  ID        BIGINT      NOT NULL AUTO_INCREMENT,
+  TYPE      VARCHAR(32) NOT NULL,
+  NAME      VARCHAR(32) NOT NULL,
+  GENDER    VARCHAR(8)  NOT NULL,
+  TIMESTAMP TIMESTAMP   NOT NULL,
   PRIMARY KEY (id)
 );
+INSERT INTO PET (TYPE, NAME, GENDER, TIMESTAMP)
+VALUES ('DOG', 'Spike', 'male', '2017-05-20 12:00:00'),
+       ('DOG', 'Spike Jr.', 'male', '2017-05-20 12:00:00'),
+       ('DOG', 'Spike Third', 'male', '2017-05-20 12:00:00');
