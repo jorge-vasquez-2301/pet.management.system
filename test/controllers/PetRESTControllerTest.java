@@ -6,8 +6,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.Pet;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import play.Application;
+import play.db.Database;
+import play.db.evolutions.Evolution;
+import play.db.evolutions.Evolutions;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -28,6 +33,8 @@ public class PetRESTControllerTest extends WithApplication {
     private static final BinaryOperator<Pet> COMPARING_BY_TIMESTAMP = (pet1, pet2) -> pet1.getTimestamp().after(pet2.getTimestamp()) ? pet1 : pet2;
     private static final BinaryOperator<Pet> COMPARING_BY_NAME = (pet1, pet2) -> pet1.getName().compareTo(pet2.getName()) < 0 ? pet1 : pet2;
 
+    Database database;
+
     private Predicate<Pet> filteringByTimestamp(List<Pet> pets) {
         return pet -> pet.getTimestamp().equals(pets.get(0).getTimestamp());
     }
@@ -38,7 +45,8 @@ public class PetRESTControllerTest extends WithApplication {
 
     private List<Pet> parseJson(Result result) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<Pet>> mapType = new TypeReference<List<Pet>>() {};
+        TypeReference<List<Pet>> mapType = new TypeReference<List<Pet>>() {
+        };
         JsonFactory jsonFactory = new JsonFactory();
         JsonParser parser = jsonFactory.createParser(contentAsBytes(result).toArray());
         return mapper.readValue(parser, mapType);
@@ -56,9 +64,29 @@ public class PetRESTControllerTest extends WithApplication {
         return new GuiceApplicationBuilder().build();
     }
 
+    @Before
+    public void createDatabase() {
+        database = app.injector().instanceOf(Database.class);
+        Evolutions.applyEvolutions(database, Evolutions.forDefault(
+                new Evolution(
+                        2,
+                        "INSERT INTO PET (TYPE, NAME, GENDER, TIMESTAMP) VALUES \n" +
+                                "('DOG', 'Spike', 'male', '2017-05-20 12:00:00'),\n" +
+                                "('DOG', 'Spike Jr.', 'male', '2017-05-20 12:00:00'),\n" +
+                                "('DOG', 'Spike Third', 'male', '2017-05-20 12:00:00');",
+                        "DELETE FROM PET;"
+                )
+        ));
+    }
+
+    @After
+    public void shutdownDatabase() {
+        Evolutions.cleanupEvolutions(database);
+    }
+
     @Test
     public void testCreateMalePet() {
-        Http.RequestBuilder request = new Http.RequestBuilder().method(POST).uri("/pets/new/dog/Spike/male");
+        Http.RequestBuilder request = new Http.RequestBuilder().method(POST).uri("/pets/new/dog/Spike/male/20170521-120000");
 
         Result result = route(app, request);
         assertEquals(OK, result.status());
@@ -66,10 +94,18 @@ public class PetRESTControllerTest extends WithApplication {
 
     @Test
     public void testCreateFemalePet() {
-        Http.RequestBuilder request = new Http.RequestBuilder().method(POST).uri("/pets/new/cat/Whiskers/female");
+        Http.RequestBuilder request = new Http.RequestBuilder().method(POST).uri("/pets/new/cat/Whiskers/female/20170521-120000");
 
         Result result = route(app, request);
         assertEquals(OK, result.status());
+    }
+
+    @Test
+    public void testCreatePetWithInvalidTimestamp() {
+        Http.RequestBuilder request = new Http.RequestBuilder().method(POST).uri("/pets/new/cat/Whiskers/female/20170521120000");
+
+        Result result = route(app, request);
+        assertEquals(BAD_REQUEST, result.status());
     }
 
     @Test

@@ -51,15 +51,16 @@ public class Pet extends Model {
 
     /**
      * Creates a new instance of Pet.
-     * @param type   The pet's type (i.e. dog, cat, ...)
-     * @param name   The pet's name
-     * @param gender The pet's gender (i.e. male, female)
+     * @param type      The pet's type (i.e. dog, cat, ...)
+     * @param name      The pet's name
+     * @param gender    The pet's gender (i.e. male, female)
+     * @param timestamp The pet's creation timestamp
      */
-    public Pet(String type, String name, String gender) {
+    public Pet(String type, String name, String gender, Date timestamp) {
         this.type = type;
         this.name = name;
         this.gender = gender;
-        timestamp = new Date();
+        this.timestamp = timestamp;
     }
 
     /**

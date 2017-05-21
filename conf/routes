@@ -2,20 +2,20 @@
 # This file defines all application routes (Higher priority routes first)
 
 # Create a new pet
-# For example /pets/dog/Spike/male
-POST          /pets/new/:petType/:name/:gender        controllers.PetRESTController.createPet(petType, name, gender)
+# For example /pets/dog/Spike/male/20170521-120000
+POST          /pets/new/:petType/:name/:gender/:timestamp        controllers.PetRESTController.createPet(petType, name, gender, timestamp)
 
 # Search for pets by name
 # For example /pets/name/spike
-GET           /pets/name/:name                        controllers.PetRESTController.searchByName(name)
+GET           /pets/name/:name                                   controllers.PetRESTController.searchByName(name)
 
 # Search for pets by type and gender(optional)
 # For example /pets/type/dog or /pets/type/dog?gender=female
-GET           /pets/type/:petType                     controllers.PetRESTController.searchByTypeAndGender(petType, gender ?= null)
+GET           /pets/type/:petType                                controllers.PetRESTController.searchByTypeAndGender(petType, gender ?= null)
 
 # Delete a pet
 # For example /pets/1234
-DELETE        /pets/delete/:id                        controllers.PetRESTController.deletePet(id: Long)
+DELETE        /pets/delete/:id                                   controllers.PetRESTController.deletePet(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                                      controllers.Assets.versioned(path="/public", file: Asset)

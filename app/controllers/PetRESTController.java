@@ -8,6 +8,8 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -39,15 +41,21 @@ public class PetRESTController extends Controller {
 
     /**
      * This action creates a new pet for the given parameters.
-     * @param petType The pet's type (i.e. dog, cat, ...)
-     * @param name    The pet's name
-     * @param gender  The pet's gender (i.e. male, female)
+     * @param petType   The pet's type (i.e. dog, cat, ...)
+     * @param name      The pet's name
+     * @param gender    The pet's gender (i.e. male, female)
+     * @param timestamp The pet's creation timestamp
      * @return the Result containing the result code
      */
-    public Result createPet(String petType, String name, String gender) {
-        Pet pet = new Pet(petType, name, gender);
-        pet.save();
-        return ok();
+    public Result createPet(String petType, String name, String gender, String timestamp) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        try {
+            Pet pet = new Pet(petType, name, gender, formatter.parse(timestamp));
+            pet.save();
+            return ok();
+        } catch (ParseException e) {
+            return badRequest("Illegal date format");
+        }
     }
 
     /**

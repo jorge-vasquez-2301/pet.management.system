@@ -7,7 +7,3 @@ CREATE TABLE PET (
   TIMESTAMP TIMESTAMP   NOT NULL,
   PRIMARY KEY (id)
 );
-INSERT INTO PET (TYPE, NAME, GENDER, TIMESTAMP)
-VALUES ('DOG', 'Spike', 'male', '2017-05-20 12:00:00'),
-       ('DOG', 'Spike Jr.', 'male', '2017-05-20 12:00:00'),
-       ('DOG', 'Spike Third', 'male', '2017-05-20 12:00:00');
