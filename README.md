@@ -3,6 +3,7 @@
 <ol>
     <li><a href="#design">Design choices</a></li>
     <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#instructions">Running instructions</a></li>
 </ol>
 
 **<a name="design"><h2>Design choices</h2></a>**
@@ -22,6 +23,13 @@
 
 **<a name="requirements"><h2>Requirements</h2></a>**
 <ul>
-    <li>JDK 8, you can get it from <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_new">here</a></li>
-    <li>SBT, you can find installation instructions for Windows, Linux or Mac <a href="http://www.scala-sbt.org/0.13/docs/Setup.html" target="_new">here</a></li>
+    <li>JDK 8, you can get it from <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank">here</a></li>
+    <li>SBT, you can find installation instructions for Windows, Linux or Mac <a href="http://www.scala-sbt.org/0.13/docs/Setup.html" target="_blank">here</a></li>
+</ul>
+
+**<a name="instructions"><h2>Running instructions</h2></a>**
+<ul>
+    <li>For running the application in development mode, just issue the command <code>sbt run</code> in the project's root directory (if sbt is not included in system path, execute <code>/full/path/to/sbt run</code>)</li>
+    <li>For running tests for the application, just issue the command <code>sbt test</code> in the project's root directory (if sbt is not included in system path, execute <code>/full/path/to/sbt test</code>)</li>
+    <li>Once the application is started, it listens on port 9000 expecting for requests</li>
 </ul>
