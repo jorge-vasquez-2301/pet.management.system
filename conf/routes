@@ -6,7 +6,7 @@
 POST          /pets/new/:petType/:name/:gender        controllers.PetRESTController.createPet(petType, name, gender)
 
 # Search for pets by name
-# For example /pets/name/Spike
+# For example /pets/name/spike
 GET           /pets/name/:name                        controllers.PetRESTController.searchByName(name)
 
 # Search for pets by type and gender(optional)

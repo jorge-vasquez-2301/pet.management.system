@@ -2,7 +2,6 @@ package controllers;
 
 import com.avaje.ebean.Ebean;
 import models.Pet;
-import play.Logger;
 import play.cache.CacheApi;
 import play.libs.Json;
 import play.mvc.Controller;

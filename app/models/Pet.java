@@ -8,10 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static com.avaje.ebean.Expr.ilike;
 
@@ -64,42 +62,77 @@ public class Pet extends Model {
         timestamp = new Date();
     }
 
+    /**
+     * @return pet's id
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the pet's id.
+     * @param id the new id
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * @return pet's type
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Sets the pet's type.
+     * @param type the new type
+     */
     public void setType(String type) {
         this.type = type;
     }
 
+    /**
+     * @return pet's name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the pet's name.
+     * @param name the new name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * @return pet's gender
+     */
     public String getGender() {
         return gender;
     }
 
+    /**
+     * Sets the pet's gender.
+     * @param gender the new gender
+     */
     public void setGender(String gender) {
         this.gender = gender;
     }
 
+    /**
+     * @return pet's creation timestamp
+     */
     public Date getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Sets the pet's gender.
+     * @param timestamp the new timestamp
+     */
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
@@ -140,40 +173,5 @@ public class Pet extends Model {
                         ilike(GENDER, gender))
                    .orderBy(TIMESTAMP + " " + DESC)
                    .findList();
-    }
-
-    /**
-     * The Gender enum.
-     * This models the possible values for a pet's gender.
-     */
-    public enum Gender {
-        MALE    ("male"),
-        FEMALE  ("female");
-
-        private String value;
-
-        /**
-         * Constructor for Gender.
-         * @param value Gender value: male/female
-         */
-        Gender(String value) {
-            this.value = value;
-        }
-
-        /**
-         * @return the value
-         */
-        public String getValue() {
-            return value;
-        }
-
-        /**
-         * Returns a Gender for the given value.
-         * @param value Gender value: male/female
-         * @return the corresponding Gender
-         */
-        public static Optional<Gender> getGender(String value) {
-            return Arrays.stream(Gender.values()).filter(gender -> gender.getValue().equals(value)).findFirst();
-        }
     }
 }

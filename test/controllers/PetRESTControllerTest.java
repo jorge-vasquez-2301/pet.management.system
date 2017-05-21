@@ -121,7 +121,6 @@ public class PetRESTControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder().method(GET).uri("/pets/type/dog?gender=male");
 
         Result result = route(app, request);
-        ObjectMapper mapper = new ObjectMapper();
         List<Pet> pets = parseJson(result);
         assertEquals(3, pets.size());
         assertTrue(pets.stream().allMatch(pet -> pet.getType().toLowerCase().contains("dog") && pet.getGender().toLowerCase().contains("male")));
