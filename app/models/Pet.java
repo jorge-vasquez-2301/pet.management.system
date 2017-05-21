@@ -35,19 +35,19 @@ public class Pet extends Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @Constraints.Required
-    public String type;
+    private String type;
 
     @Constraints.Required
-    public String name;
+    private String name;
 
     @Constraints.Required
-    public String gender;
+    private String gender;
 
     @Constraints.Required
-    public Date timestamp;
+    private Date timestamp;
 
     private static Finder<Long, Pet> find = new Finder<>(Pet.class);
 
@@ -62,6 +62,46 @@ public class Pet extends Model {
         this.name = name;
         this.gender = gender;
         timestamp = new Date();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     /**

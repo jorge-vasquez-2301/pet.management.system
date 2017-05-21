@@ -25,15 +25,15 @@ import static play.test.Helpers.*;
 
 public class PetRESTControllerTest extends WithApplication {
 
-    private static final BinaryOperator<Pet> COMPARING_BY_TIMESTAMP = (pet1, pet2) -> pet1.timestamp.after(pet2.timestamp) ? pet1 : pet2;
-    private static final BinaryOperator<Pet> COMPARING_BY_NAME = (pet1, pet2) -> pet1.name.compareTo(pet2.name) < 0 ? pet1 : pet2;
+    private static final BinaryOperator<Pet> COMPARING_BY_TIMESTAMP = (pet1, pet2) -> pet1.getTimestamp().after(pet2.getTimestamp()) ? pet1 : pet2;
+    private static final BinaryOperator<Pet> COMPARING_BY_NAME = (pet1, pet2) -> pet1.getName().compareTo(pet2.getName()) < 0 ? pet1 : pet2;
 
     private Predicate<Pet> filteringByTimestamp(List<Pet> pets) {
-        return pet -> pet.timestamp.equals(pets.get(0).timestamp);
+        return pet -> pet.getTimestamp().equals(pets.get(0).getTimestamp());
     }
 
     private Predicate<Pet> filteringByName(List<Pet> pets) {
-        return pet -> pet.name.equals(pets.get(0).name);
+        return pet -> pet.getName().equals(pets.get(0).getName());
     }
 
     private List<Pet> parseJson(Result result) throws IOException {
@@ -80,7 +80,7 @@ public class PetRESTControllerTest extends WithApplication {
         List<Pet> pets = parseJson(result);
         assertEquals(OK, result.status());
         assertEquals(3, pets.size());
-        assertTrue(pets.stream().allMatch(pet -> pet.name.contains("Spike")));
+        assertTrue(pets.stream().allMatch(pet -> pet.getName().toLowerCase().contains("spike")));
         assertTrue(isInOrder(pets, COMPARING_BY_NAME, filteringByName(pets)));
     }
 
@@ -102,7 +102,7 @@ public class PetRESTControllerTest extends WithApplication {
         List<Pet> pets = parseJson(result);
         assertEquals(OK, result.status());
         assertEquals(3, pets.size());
-        assertTrue(pets.stream().allMatch(pet -> pet.type.contains("DOG")));
+        assertTrue(pets.stream().allMatch(pet -> pet.getType().toLowerCase().contains("dog")));
         assertTrue(isInOrder(pets, COMPARING_BY_TIMESTAMP, filteringByTimestamp(pets)));
     }
 
@@ -124,7 +124,7 @@ public class PetRESTControllerTest extends WithApplication {
         ObjectMapper mapper = new ObjectMapper();
         List<Pet> pets = parseJson(result);
         assertEquals(3, pets.size());
-        assertTrue(pets.stream().allMatch(pet -> pet.type.contains("DOG") && pet.gender.contains("male")));
+        assertTrue(pets.stream().allMatch(pet -> pet.getType().toLowerCase().contains("dog") && pet.getGender().toLowerCase().contains("male")));
         assertTrue(isInOrder(pets, COMPARING_BY_TIMESTAMP, filteringByTimestamp(pets)));
     }
 
@@ -142,7 +142,7 @@ public class PetRESTControllerTest extends WithApplication {
     public void testDeleteExistingPet() {
         Pet pet = Ebean.find(Pet.class, 1);
         assertNotNull(pet);
-        Http.RequestBuilder request = new Http.RequestBuilder().method(DELETE).uri("/pets/delete/" + pet.id);
+        Http.RequestBuilder request = new Http.RequestBuilder().method(DELETE).uri("/pets/delete/" + pet.getId());
 
         Result result = route(app, request);
         assertEquals(OK, result.status());
