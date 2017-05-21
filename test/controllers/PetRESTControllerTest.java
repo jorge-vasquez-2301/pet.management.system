@@ -1,6 +1,8 @@
 package controllers;
 
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.Pet;
@@ -13,14 +15,41 @@ import play.test.WithApplication;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
 
 import static org.junit.Assert.*;
-import static play.mvc.Http.Status.BAD_REQUEST;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.*;
 
 
 public class PetRESTControllerTest extends WithApplication {
+
+    private static final BinaryOperator<Pet> COMPARING_BY_TIMESTAMP = (pet1, pet2) -> pet1.timestamp.after(pet2.timestamp) ? pet1 : pet2;
+    private static final BinaryOperator<Pet> COMPARING_BY_NAME = (pet1, pet2) -> pet1.name.compareTo(pet2.name) < 0 ? pet1 : pet2;
+
+    private Predicate<Pet> filteringByTimestamp(List<Pet> pets) {
+        return pet -> pet.timestamp.equals(pets.get(0).timestamp);
+    }
+
+    private Predicate<Pet> filteringByName(List<Pet> pets) {
+        return pet -> pet.name.equals(pets.get(0).name);
+    }
+
+    private List<Pet> parseJson(Result result) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<List<Pet>> mapType = new TypeReference<List<Pet>>() {};
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonParser parser = jsonFactory.createParser(contentAsBytes(result).toArray());
+        return mapper.readValue(parser, mapType);
+    }
+
+    private boolean isInOrder(List<Pet> pets, BinaryOperator<Pet> comparingFunction, Predicate<Pet> filteringFunction) {
+        return pets.stream()
+                   .reduce(comparingFunction)
+                   .filter(filteringFunction)
+                   .isPresent();
+    }
 
     @Override
     protected Application provideApplication() {
@@ -44,25 +73,15 @@ public class PetRESTControllerTest extends WithApplication {
     }
 
     @Test
-    public void testCreatePetWithErroneusGender() {
-        Http.RequestBuilder request = new Http.RequestBuilder().method(POST).uri("/pets/new/cat/Whiskers/none");
-
-        Result result = route(app, request);
-        assertEquals(BAD_REQUEST, result.status());
-    }
-
-    @Test
     public void testSearchExistingPetByName() throws IOException {
         Http.RequestBuilder request = new Http.RequestBuilder().method(GET).uri("/pets/name/spike");
 
         Result result = route(app, request);
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<Pet>> mapType = new TypeReference<List<Pet>>() {
-        };
-        List<Pet> pets = mapper.readValue(contentAsString(result), mapType);
+        List<Pet> pets = parseJson(result);
         assertEquals(OK, result.status());
         assertEquals(3, pets.size());
         assertTrue(pets.stream().allMatch(pet -> pet.name.contains("Spike")));
+        assertTrue(isInOrder(pets, COMPARING_BY_NAME, filteringByName(pets)));
     }
 
     @Test
@@ -70,10 +89,7 @@ public class PetRESTControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder().method(GET).uri("/pets/name/pluto");
 
         Result result = route(app, request);
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<Pet>> mapType = new TypeReference<List<Pet>>() {
-        };
-        List<Pet> pets = mapper.readValue(contentAsString(result), mapType);
+        List<Pet> pets = parseJson(result);
         assertEquals(OK, result.status());
         assertEquals(0, pets.size());
     }
@@ -83,13 +99,11 @@ public class PetRESTControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder().method(GET).uri("/pets/type/dog");
 
         Result result = route(app, request);
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<Pet>> mapType = new TypeReference<List<Pet>>() {
-        };
-        List<Pet> pets = mapper.readValue(contentAsString(result), mapType);
+        List<Pet> pets = parseJson(result);
         assertEquals(OK, result.status());
         assertEquals(3, pets.size());
         assertTrue(pets.stream().allMatch(pet -> pet.type.contains("DOG")));
+        assertTrue(isInOrder(pets, COMPARING_BY_TIMESTAMP, filteringByTimestamp(pets)));
     }
 
     @Test
@@ -97,10 +111,7 @@ public class PetRESTControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder().method(GET).uri("/pets/type/cat");
 
         Result result = route(app, request);
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<Pet>> mapType = new TypeReference<List<Pet>>() {
-        };
-        List<Pet> pets = mapper.readValue(contentAsString(result), mapType);
+        List<Pet> pets = parseJson(result);
         assertEquals(OK, result.status());
         assertEquals(0, pets.size());
     }
@@ -111,12 +122,10 @@ public class PetRESTControllerTest extends WithApplication {
 
         Result result = route(app, request);
         ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<Pet>> mapType = new TypeReference<List<Pet>>() {
-        };
-        List<Pet> pets = mapper.readValue(contentAsString(result), mapType);
-        assertEquals(OK, result.status());
+        List<Pet> pets = parseJson(result);
         assertEquals(3, pets.size());
         assertTrue(pets.stream().allMatch(pet -> pet.type.contains("DOG") && pet.gender.contains("male")));
+        assertTrue(isInOrder(pets, COMPARING_BY_TIMESTAMP, filteringByTimestamp(pets)));
     }
 
     @Test
@@ -124,10 +133,7 @@ public class PetRESTControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder().method(GET).uri("/pets/type/dog?gender=female");
 
         Result result = route(app, request);
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<Pet>> mapType = new TypeReference<List<Pet>>() {
-        };
-        List<Pet> pets = mapper.readValue(contentAsString(result), mapType);
+        List<Pet> pets = parseJson(result);
         assertEquals(OK, result.status());
         assertEquals(0, pets.size());
     }

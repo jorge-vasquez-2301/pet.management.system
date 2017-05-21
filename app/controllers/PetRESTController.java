@@ -46,16 +46,9 @@ public class PetRESTController extends Controller {
      * @return the Result containing the result code
      */
     public Result createPet(String petType, String name, String gender) {
-        try {
-            Pet pet = Pet.Gender.getGender(gender)
-                                .map(petGender -> new Pet(petType, name, gender))
-                                .orElseThrow(IllegalArgumentException::new);
-            pet.save();
-            return ok();
-        } catch (IllegalArgumentException ex) {
-            Logger.warn(ex.getMessage());
-            return badRequest("Illegal gender, must be male or female");
-        }
+        Pet pet = new Pet(petType, name, gender);
+        pet.save();
+        return ok();
     }
 
     /**
@@ -66,7 +59,7 @@ public class PetRESTController extends Controller {
     public CompletionStage<Result> searchByName(String name) {
         return CompletableFuture.supplyAsync(() -> cache.getOrElse(SEARCH_BY_NAME_KEY + name.toLowerCase(),
                                                                    () -> Pet.findByName(name)))
-                                .thenApply(pets -> ok(Json.stringify(Json.toJson(pets))));
+                                .thenApply(pets -> ok(Json.toJson(pets)));
     }
 
     /**
@@ -80,7 +73,7 @@ public class PetRESTController extends Controller {
         Callable<List<Pet>> actionToExecute = () -> (gender != null) ? Pet.findByTypeAndGender(petType, gender)
                                                                      : Pet.findByType(petType);
         return CompletableFuture.supplyAsync(() -> cache.getOrElse(cacheKey, actionToExecute))
-                                .thenApply(pets -> ok(Json.stringify(Json.toJson(pets))));
+                                .thenApply(pets -> ok(Json.toJson(pets)));
     }
 
     /**
