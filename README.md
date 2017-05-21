@@ -1,4 +1,4 @@
-# pet.management.system
+# Pet management system
 
 <ol>
     <li><a href="#design">Design choices</a></li>
