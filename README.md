@@ -14,9 +14,10 @@
     <li><b>SBT</b> is used as the build and dependencies management tool for this project, this is because Play framework has APIs for Java and Scala, so SBT is supported by Play by default</li>
     <li><b>EBean</b> was the choice for ORM because of its great integration with the Play framework</li>
     <li>For storing information about pets, an <b>H2 in-memory database</b> is used, because Play includes H2 driver libraries by default</li>
-    <li>For better performance, results for search request are cached, using <b>Play's cache API</b>, that is based in EHCache</li>
+    <li>For better performance, results for search request are cached, using <b>Play's cache API</b>, that is based in EHCache, this implies that data obtained in searches will not always be synchronized with the database, in a real application caching time must be tuned to achieve optimum balance</li>
     <li>For better performance, search methods in PetRESTController are <b>asynchronous</b>, database queries are executed in separate threads</li>
     <li>Play's <b>evolution script</b> is used to create the PET table in the H2 database when the application starts</li>
+    <li>Routes are configured in app/conf/routes file</li>
     <li><b>JUnit</b> was the chosen framework for testing</li>
     <li>Searches are case insensitive</li>
 </ul>
@@ -29,7 +30,8 @@
 
 **<a name="instructions"><h2>Running instructions</h2></a>**
 <ul>
-    <li>For running the application in development mode, just issue the command <code>sbt run</code> in the project's root directory (if sbt is not included in system path, execute <code>/full/path/to/sbt run</code>)</li>
+    <li>For running the application in development mode, just issue the command <code>sbt run</code> in the project's root directory, where the build.sbt file resides (if sbt is not included in system path, execute <code>/full/path/to/sbt run</code>)</li>
+    <li>The first time the application runs, SBT will download automatically all the dependencies</li>
     <li>For running tests for the application, just issue the command <code>sbt test</code> in the project's root directory (if sbt is not included in system path, execute <code>/full/path/to/sbt test</code>)</li>
     <li>Once the application is started, it listens on port 9000 expecting for requests</li>
 </ul>
