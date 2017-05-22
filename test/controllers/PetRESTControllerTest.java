@@ -187,7 +187,7 @@ public class PetRESTControllerTest extends WithApplication {
     public void testDeleteNonExistingPet() {
         Pet pet = Ebean.find(Pet.class, -1);
         assertNull(pet);
-        Http.RequestBuilder request = new Http.RequestBuilder().method(DELETE).uri("/pets/delete/2");
+        Http.RequestBuilder request = new Http.RequestBuilder().method(DELETE).uri("/pets/delete/-1");
 
         Result result = route(app, request);
         assertEquals(OK, result.status());

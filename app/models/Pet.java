@@ -1,6 +1,5 @@
 package models;
 
-
 import com.avaje.ebean.Model;
 import play.data.validation.Constraints;
 
