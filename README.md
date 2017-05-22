@@ -32,6 +32,7 @@
 <ul>
     <li>For running the application in development mode, just issue the command <code>sbt run</code> in the project's root directory, where the build.sbt file resides (if sbt is not included in system path, execute <code>/full/path/to/sbt run</code>)</li>
     <li>The first time the application runs, SBT will download automatically all the dependencies</li>
+    <li>The first time the application receives a request, as the application is in development mode, the code is automatically compiled</li>
     <li>For running tests for the application, just issue the command <code>sbt test</code> in the project's root directory (if sbt is not included in system path, execute <code>/full/path/to/sbt test</code>)</li>
     <li>Once the application is started, it listens on port 9000 expecting for requests</li>
 </ul>
